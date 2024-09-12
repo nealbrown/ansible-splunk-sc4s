@@ -1,0 +1,17 @@
+[Unit]
+Description=SC4S Syslog Daemon
+Documentation=https://splunk-connect-for-syslog.readthedocs.io/en/latest/
+Wants=network.target network-online.target
+After=network.target network-online.target
+
+[Service]
+Type=simple
+ExecStart=/etc/syslog-ng/entrypoint.sh
+ExecReload=/bin/kill -HUP $MAINPID
+EnvironmentFile=/etc/syslog-ng/env_file
+StandardOutput=journal
+StandardError=journal
+Restart=on-abnormal
+
+[Install]
+WantedBy=multi-user.target

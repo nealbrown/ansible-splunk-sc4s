@@ -34,3 +34,63 @@
         - gcc
         - python3-devel
       state: present
+  
+  - name: Disable default syslog-ng
+    ansible.builtin.systemd_service:
+      state: stopped
+      enabled: false
+      name: syslog-ng
+  
+  - name: Remove default syslog-ng service file
+    ansible.builtin.file:
+      path: /lib/systemd/system/syslog-ng.service
+      state: absent
+
+  - name: Download Splunk patches to syslog-ng and apply them
+    ansible.builtin.unarchive:
+      src: https://github.com/splunk/splunk-connect-for-syslog/releases/download/v3.30.1/baremetal.tar
+      dest: /etc/syslog-ng
+      remote_src: yes
+  
+  - name: Recursively fix permissions on /etc/syslog-ng
+    ansible.builtin.file:
+      path: /etc/syslog-ng
+      state: directory
+      recurse: yes
+      owner: root
+      group: root
+  
+  - name: Install syslog-ng pip requirements
+    ansible.builtin.pip:
+      requirements: /etc/syslog-ng/requirements.txt
+      executable: pip3.9
+  
+  - name: Manually download the goss binary
+    ansible.builtin.get_url:
+      url: https://github.com/aelsabbahy/goss/releases/latest/download/goss-linux-amd64
+      dest: /usr/bin/goss
+      mode: '0755'
+      owner: root
+      group: root
+  
+  - name: Copy SC4S service script
+    ansible.builtin.copy:
+      src: sc4s.service
+      dest: /lib/systemd/system/sc4s.service
+      owner: root
+      group: root
+      mode: '0644'
+
+  - name: Copy SC4S env_file
+    ansible.builtin.copy:
+      src: env_file
+      dest: /etc/syslog-ng/env_file
+      owner: root
+      group: root
+      mode: '0644'
+  
+  - name: Enable SC4S service
+    ansible.builtin.systemd_service:
+      state: started
+      enabled: true
+      name: sc4s

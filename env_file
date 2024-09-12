@@ -1,0 +1,15 @@
+# The following "path" variables can differ from the container defaults specified in the entrypoint.sh script. 
+# These are *optional* for most BYOE installations, which do not differ from the install location used.
+# in the container version of SC4S.  Failure to properly set these will cause startup failure.
+#SC4S_ETC=/etc/syslog-ng
+#SC4S_VAR=/etc/syslog-ng/var
+#SC4S_BIN=/bin
+#SC4S_SBIN=/usr/sbin
+#SC4S_TLS=/etc/syslog-ng/tls
+
+# General Options
+SC4S_DEST_SPLUNK_HEC_DEFAULT_URL=https://splunk.smg.aws:8088
+SC4S_DEST_SPLUNK_HEC_DEFAULT_TOKEN=a778f63a-5dff-4e3c-a72c-a03183659e94
+
+# Uncomment the following line if using untrusted (self-signed) SSL certificates
+# SC4S_DEST_SPLUNK_HEC_DEFAULT_TLS_VERIFY=no
