@@ -3,8 +3,34 @@
   become: yes
   tasks:
   
-  - name: Add repository
-    ansible.builtin.yum_repository:
-      name: epel
-      description: EPEL YUM repo
-      baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+  - name: Import EPEL key
+    ansible.builtin.rpm_key:
+      state: present
+      key: https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-8
+
+  - name: Add EPEL repository via RPM
+    ansible.builtin.dnf:
+      name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+      state: present
+  
+  - name: Import Syslog-ng key
+    ansible.builtin.rpm_key:
+      state: present
+      key: https://download.copr.fedorainfracloud.org/results/czanik/syslog-ng336/pubkey.gpg
+
+  - name: Add syslog-ng repository via .repo
+    ansible.builtin.get_url:
+      url: https://copr.fedorainfracloud.org/coprs/czanik/syslog-ng336/repo/epel-8/czanik-syslog-ng336-epel-8
+      dest: /etc/yum.repos.d/syslog-ng.repo
+      mode: '0644'
+
+  - name: Install syslog-ng and dependencies
+    ansible.builtin.dnf:
+      name:
+        - syslog-ng
+        - syslog-ng-python
+        - syslog-ng-http
+        - python3-pip 
+        - gcc
+        - python3-devel
+      state: present
