@@ -1,0 +1,6 @@
+[servers]
+rocky8 ansible_host=192.168.10.194
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+ansible_user=neal
